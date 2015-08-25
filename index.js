@@ -1,6 +1,3 @@
-/**
- * Created by layton on 8/24/15.
- */
 'use strict';
 
 // --------------------------
@@ -156,7 +153,6 @@ Prefixer.registerRuleHandler( 'media', function( rule ) {
     for( var i = 0; i < rule.rules.length; i++ ) {
         var childRule = rule.rules[i];
         if( this.isHandlerExist( childRule ) ) {
-            //console.log(childRule)
             this.processRule(childRule);
         }
     }
@@ -182,7 +178,6 @@ module.exports = function( file, options ) {
     var prefixerInstance = new Prefixer( file, options ),
         reworkInstance = rework( file );
 
-    //console.log(prefixes);
     reworkInstance
         .use( prefixerInstance.processFile() )
         .use( mixin( prefixerInstance.mixin( 'animation-name' ) ) );
