@@ -1,0 +1,36 @@
+{
+  "name": "css-prefixer",
+  "version": "0.1.0",
+  "description": "prefix css rules using rework",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap -R spec test/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/medullan/css-prefixer.git"
+  },
+  "keywords": [
+    "rework",
+    "css",
+    "prefix",
+    "css-prefix",
+    "css-prefixer",
+    "prefixer"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/medullan/css-prefixer/issues"
+  },
+  "homepage": "https://github.com/medullan/css-prefixer",
+  "dependencies": {
+    "lodash": "^3.10.1",
+    "rework": "^1.0.1",
+    "rework-plugin-mixin": "^1.0.0",
+    "underscore.string": "^2.3.3"
+  },
+  "devDependencies": {
+    "tap": "^1.3.2"
+  }
+}

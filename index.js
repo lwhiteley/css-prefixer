@@ -10,18 +10,17 @@
 // --------------------------
 
 // external modules
-var rework = require( 'rework' )
-    , str = require( 'underscore.string' )
+var rework = require( 'rework' ),
+    mixin = require('rework-plugin-mixin'),
+    _ = require( 'lodash' ),
+    util = require( './lib/util.services.js' ),
+    str = require( 'underscore.string' )
 
 // Class definition
 //
 // * **param:** {string}   file    content of the file
 // * **param:** {object}   options
     , Prefixer = function( file, options ) {
-        var _options= {
-            processName: 'dasherize',
-            vendor: [ '-webkit-', '-moz-', '-ms-', '-o-' ]
-        };
         this.file = file;
         this.options = options;
     };
@@ -38,7 +37,6 @@ Prefixer.registerRuleHandler = function( ruleName, handler ) {
 //
 // * **param:** {object} rule
 Prefixer.prototype.processRule = function( rule ) {
-    //console.log(rule);
     return this.getRuleHandler( rule ).call( this, rule );
 };
 
@@ -75,14 +73,12 @@ Prefixer.prototype.processFile = function() {
 //
 // * **param:** {string} name
 Prefixer.prototype.processName = function( name ) {
-    if( str[ this.options.processName ] == null ) {
-        throw new Error( 'could not find a method for the option processName: ' + this.options.processName );
+    if(this.options.processName && str[ this.options.processName ] !== null ) {
+        // trick to keep all spaces
+        name = name.replace( / /g, '/' );
+        name = str[ this.options.processName ]( name );
+        name = name.replace( /\//g, ' ' );
     }
-
-    // trick to keep all spaces
-    name = name.replace( / /g, '/' );
-    name = str[ this.options.processName ]( name );
-    name = name.replace( /\//g, ' ' );
     return name;
 };
 
@@ -91,20 +87,21 @@ Prefixer.prototype.processName = function( name ) {
 //
 // * **param:** {string} propName   css property name to generate the mixin for
 Prefixer.prototype.mixin = function( propName ) {
-    var self = this
-        , temp   = {}
-        , noop   = function() {}
-        , fn     = function( type ) {
-            var prop = {};
-            prop[ propName ] = self.options.prefix + self.processName( type )
-            return prop;
+    var self = this,
+        temp   = {},
+        vendorfn = function( name ) {
+            return function( type ) {
+                var prop = {};
+                prop[ name ] = self.options.prefix + self.processName( type );
+                return prop;
+            };
         };
 
-    temp[ '-webkit-' + propName ] = noop;
-    temp[    '-moz-' + propName ] = noop;
-    temp[     '-ms-' + propName ] = noop;
-    temp[      '-o-' + propName ] = noop;
-    temp[              propName ] = fn;
+    temp[ '-webkit-' + propName ] = vendorfn('-webkit-' + propName);
+    temp[    '-moz-' + propName ] = vendorfn('-moz-' + propName);
+    temp[     '-ms-' + propName ] = vendorfn('-ms-' + propName);
+    temp[      '-o-' + propName ] = vendorfn('-o-' + propName);
+    temp[              propName ] = vendorfn(propName);
 
     return temp;
 };
@@ -112,18 +109,25 @@ Prefixer.prototype.mixin = function( propName ) {
 // rule handlers
 // -------------
 Prefixer.registerRuleHandler( 'rule', function( rule ) {
-    // prefixing class names
     for( var i = 0, len = rule.selectors.length; i < len; i++ ) {
         // strip
-        if( this.options.strip ) {
+        if( this.options.strip &&  this.options.strip.length > 0) {
             rule.selectors[ i ] = rule.selectors[ i ].split( this.options.strip ).join( '' );
         }
 
         // adding prefix
-        rule.selectors[ i ] = this.processName( rule.selectors[ i ] ).split( '.' ).join( '.' + this.options.prefix );
+        var classNames = util.modifyNames(
+            this.processName( rule.selectors[ i ] ).split( '.' ),
+            this.options,
+            util.const.className);
+        rule.selectors[ i ] = classNames;
 
         if(this.options.prefixIdSelectors){
-            rule.selectors[ i ] = this.processName( rule.selectors[ i ] ).split( '#' ).join( '#' + this.options.prefix );
+            var idSelectors = util.modifyNames(
+                this.processName( rule.selectors[ i ] ).split( '#' ),
+                this.options,
+                util.const.idSelector);
+            rule.selectors[ i ] = idSelectors;
         }
 
     }
@@ -152,25 +156,36 @@ Prefixer.registerRuleHandler( 'media', function( rule ) {
     for( var i = 0; i < rule.rules.length; i++ ) {
         var childRule = rule.rules[i];
         if( this.isHandlerExist( childRule ) ) {
+            //console.log(childRule)
             this.processRule(childRule);
         }
     }
 });
 
 module.exports = function( file, options ) {
-    var prefixerInstance = new Prefixer( file, options )
-        , reworkInstance = rework( file );
+    var _options= {
+        prefix: '',
+        punctuation: '',
+        separator: '',
+        strip: '',
+        ignore: [],
+        prefixIdSelectors: true,
+        vendor: [ '-webkit-', '-moz-', '-ms-', '-o-' ]
+    };
 
+    options = _.merge(_options, options);
+    if(!_.isArray(options.ignore)){
+        options.ignore = [];
+    }
+    options.ignore.push(options.prefix);
+
+    var prefixerInstance = new Prefixer( file, options ),
+        reworkInstance = rework( file );
+
+    //console.log(prefixes);
     reworkInstance
         .use( prefixerInstance.processFile() )
-        .use(
-        rework.mixin(
-            prefixerInstance.mixin( 'animation-name' )
-        )
-    )
-        .use(
-        rework.prefix( 'animation-name', options.vendor )
-    );
+        .use( mixin( prefixerInstance.mixin( 'animation-name' ) ) );
 
     return reworkInstance.toString();
-}
+};
