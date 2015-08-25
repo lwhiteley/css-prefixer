@@ -56,7 +56,6 @@ test('test styles are prefixed beforehand', function (t) {
     };
 
     var result = prefixer( src.mixed, options );
-    fs.writeFileSync('./test/tmp/file.css',result, 'utf-8')
     t.ok(_.contains(result, '.pre-trouble #pre-anchor'), 'test regular styles already prefixed are ignored');
     t.ok(_.contains(result, '#pre-truth2.pre-media-query-style .pre-good'), 'test that media query styles already prefixed are ignored');
     t.end();

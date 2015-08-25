@@ -1,5 +1,7 @@
 # css-prefixer
 
+[![Build Status](https://travis-ci.org/medullan/css-prefixer.svg)](https://travis-ci.org/medullan/css-prefixer)
+
 > prefixing css using rework
 
 ## Getting Started
