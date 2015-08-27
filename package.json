@@ -1,6 +1,6 @@
 {
   "name": "css-prefixer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "prefix css rules using rework",
   "main": "index.js",
   "scripts": {
