@@ -10,7 +10,7 @@
 npm install --save css-prefixer 
 ```
 
-Once the package has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
+Once the package has been installed, it may be required with this line of JavaScript:
 
 ```js
 var prefixer = require('css-prefixer');
@@ -86,10 +86,11 @@ Prefix any class name/id selector in the target file with this prefix.
 
 -------------------------
 #### options.ignore
-Type: `[String]`
-Default value: `['{options.prefix}']`
+Type: `[ '' ]`
+Default value: `[ '{options.prefix}' ]`
 
-An array of string that will ignore selector names once it starts with the provided string. The provided prefix is always added to this list by default.
+An array of strings that will ignore selector names once it starts with any of the provided strings. 
+The provided prefix is always added to this list by default.
 
 -------------------------
 #### options.processName
