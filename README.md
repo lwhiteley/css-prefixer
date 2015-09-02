@@ -79,14 +79,14 @@ h1#pre-nice div.pre-was h2 span .pre-good {
 
 -------------------------
 #### options.prefix
-Type: `String`
+Type: `String` <br/>
 Default value: `''`
 
 Prefix any class name/id selector in the target file with this prefix.
 
 -------------------------
 #### options.ignore
-Type: `[ '' ]`
+Type: `[ '' ]` <br/>
 Default value: `[ '{options.prefix}' ]`
 
 An array of strings that will ignore selector names once it starts with any of the provided strings. 
@@ -94,26 +94,33 @@ The provided prefix is always added to this list by default.
 
 -------------------------
 #### options.processName
-Type: `String`
+Type: `String` <br/>
 Default value: `null`
 
 process the prefixed class name with any of [underscore.string](https://github.com/epeli/underscore.string) methods
 
 -------------------------
 #### options.prefixIdSelectors
-Type: `Boolean`
+Type: `Boolean` <br/>
 Default value: `true`
 
 When true will prefix id selectors in the css.
 
 ----------------------
 
-### What this library doesnt do currently
-- add vendor prefixes
+### What this library doesn't do currently
+- Add vendor prefixes
+- Attribute selectors are not prefixed eg. `[class=*"the-class-name"]`
 
 ## Credits
-- to the author of [grunt-css-prefix](https://github.com/anasnakawa/grunt-css-prefix)
+- To the author of [grunt-css-prefix](https://github.com/anasnakawa/grunt-css-prefix)
+
+## Development
+- Pull requests are welcome
+- Only one commit will be accepted into master, [please squash commits](http://stackoverflow.com/questions/6934752/combining-multiple-commits-before-pushing-in-git)
 
 ## Release History
 
 * 0.1.0: initial usage
+* 0.1.1: documentation update
+* 0.1.2: documentation update
