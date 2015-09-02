@@ -124,3 +124,4 @@ When true will prefix id selectors in the css.
 * 0.1.0: initial usage
 * 0.1.1: documentation update
 * 0.1.2: documentation update
+* 0.1.3: npm publish cleanup
