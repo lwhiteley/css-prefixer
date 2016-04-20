@@ -174,6 +174,9 @@ module.exports = function( file, options ) {
         options.ignore = [];
     }
     options.ignore.push(options.prefix);
+    
+    var strip = require('strip-css-comments');
+    file = strip(file, {preserve:false})
 
     var prefixerInstance = new Prefixer( file, options ),
         reworkInstance = rework( file );
